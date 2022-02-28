@@ -1,139 +1,361 @@
-var search={};
-window.location.search.slice(1).split("&").forEach(value=>search[value.split("=")[0]]=value.split("=")[1]);
-function toggleSidebar(){
-  const sidebar=document.getElementById("sidebar");
-  const hamburger=document.getElementById("hamburger-content");
-  if(sidebar.classList.contains("open")){
-    sidebar.classList.remove("open");
-    hamburger.classList.remove("cross");
-    sidebar.classList.add("close");
-    hamburger.classList.add("burger");
-  }else{
-    sidebar.classList.add("open");
-    hamburger.classList.add("cross");
-    sidebar.classList.remove("close");
-    hamburger.classList.remove("burger");
-  };
-};
-
-function category(cat){
-  if(cat==0)return"thing";
-  if(cat==1)return"user";
-  if(cat==3)return"lyc";
-  if(cat==4)return"prot";
-  if(cat==5)return"type";
-  return cat;
-};
-var tags=search.tags?.length?`&tags=${search.tags}`:"";
-const pages=[];
-window.onload=()=>{
-  document.getElementById("search-bar").value=decodeURIComponent(search.tags?.replace(/\+/g," ")||"");
-  var page=search.page?Number(search.page):1;
-  var count=0;
-  const el=5;
-  var min=page-Math.floor(el/2);
-  if(min<1)min=1;
-  var max=min+el;
-  for(let i=min;i<max;i++){
-    if(i>1e3||i<1)continue;
-    count++;
-    fetch(`https://yande.re/post.json?page=${i}&limit=50${tags}`)
-    .then(res=>res.json())
-    .then(data=>{
-      if(data.length)pages.push(i);
-      else count--;
-      if(count==pages.length){
-        const minNum=Math.min(...pages);
-        const eq=el-pages.length;
-        for(let j=0;j<eq;j++){
-          if(minNum-j-1<1)break;
-          pages.unshift(minNum-j-1);
-        };
-        document.getElementById("pages").innerHTML=pages.sort((a,b)=>a-b).map(p=>`<a class="page${page==p?" current-page":""}" onclick="setPage(${p})">${p}</a>`).join("");
-      };
-    });
-  };
-  fetch(`https://yande.re/post.json?page=${page}&limit=50${tags}`)
-  .then(res=>res.json())
-  .then(data=>{
-    const tags={};
-    data.forEach(image=>{
-      image.tags.split(" ").forEach(t=>{
-        if(!tags[t])tags[t]=1;
-        else tags[t]++;
-      });
-    });
-    const tagsElem=document.getElementById("main-tags");
-    const images=document.getElementById("images");
-    tagsElem.innerHTML=Object.entries(tags).sort((a,b)=>b[1]-a[1]).slice(0,15).map(e=>`<a class="tag" onclick="setTag('${e[0]}')"><p class="tag-name thing">${e[0]}</p><p class="tag-usage">${e[1]}</p></a>`).join("");
-    images.innerHTML=data.map(e=>{
-      if(!e?.preview_url)return"";
-      return`<img src="${e.preview_url}" alt="${e.id}" class="image" onclick="window.location.href='yandere/post?id=${e.id}'">`;
-    }).join("");
-  });
-};
-function setPage(page){
-  if(!pages.includes(page))return;
-  search.page=page;
-  delete search[""];
-  if(search.tags=="")delete search.tags;
-  window.location.search="?"+Object.entries(search).map(e=>`${e[0]}=${e[1]}`).join("&");
-};
-function sendTags(input){
-  const tags=input.value.trim().split(/ +/).map(t=>encodeURIComponent(t)).join("+");
-  search.tags=tags;
-  delete search[""];
-  if(search.tags=="")delete search.tags;
-  if(search.page)delete search.page;
-  window.location.search="?"+Object.entries(search).map(e=>`${e[0]}=${e[1]}`).join("&");
-};
-function predict(input){
-  const predictions=document.getElementById("predictions");
-  const value=input.value.split(/ +/)[input.value.split(/ +/).length-1];
-  if(!input.value.length||!value.length)return predictions.innerHTML="";
-  fetch(`https://yande.re/tag.json?name=${encodeURIComponent(value)}&order=count`)
-  .then(res=>res.json())
-  .then(displayPredictions);
-};
-function displayPredictions(data){
-  predictions.innerHTML=data.slice(0,10).map(t=>{
-    if(t.name.length>20)t.name=t.name.slice(0,17)+" ...";
-    return`
-    <div class="prediction" onclick="complete('${t.name}')"><p class="tag-name ${category(t.type)}">${t.name}</p><p class="post-count">${t.count.toLocaleString()}</p></div>
-    `;
-  }).join("");
-};
-function setTag(tag){
-  const searchBar=document.getElementById("search-bar");
-  searchBar.value=tag;
-  sendTags(searchBar);
-};
-function complete(prediction){
-  const searchBar=document.getElementById("search-bar");
-  const values=searchBar.value.trim().split(/ +/);
-  const last=values.splice(values.length-1,1);
-  searchBar.value=searchBar.value.replace(last,prediction)+" ";
-  searchBar.focus();
-  predict(searchBar);
-};
-window.onkeydown=({code})=>{
-  if(code=="Enter"&&document.activeElement.id=="search-bar"){
-    sendTags(document.activeElement);
-  };
-};
-function nextPage(){
-  if(!search.page)search.page=2;
-  else search.page=Number(search.page)+1;
-  if(!pages.includes(search.page))return search.page--;
-  delete search[""];
-  if(search.tags=="")delete search.tags;
-  window.location.search="?"+Object.entries(search).map(e=>`${e[0]}=${e[1]}`).join("&");
-};
-function prevPage(){
-  if(!search.page||Number(search.page)==1)return;
-  else search.page=Number(search.page)-1;
-  delete search[""];
-  if(!search.page)return delete search.page;
-  if(search.tags=="")delete search.tags;
-  window.location.search="?"+Object.entries(search).map(e=>`${e[0]}=${e[1]}`).join("&");
-};
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+*{
+  margin:0;
+  font-family:"Roboto";
+  color:#f8f8f288;
+  padding:0;
+}
+body{
+  background:#282a36;
+}
+::-webkit-scrollbar{
+  width:5px;
+}
+::-webkit-scrollbar-track{
+  background:#0003;
+}
+::-webkit-scrollbar-thumb{
+  background:#fff1;
+}
+::-webkit-scrollbar-thumb:hover{
+  background:#fff2;
+}
+.navbar{
+  background:#1e2027;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:8vh;
+  z-index:999;
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  padding:0 50px;
+}
+.website-name{
+  color:#fff;
+  text-transform:uppercase;
+  letter-spacing:3px;
+  cursor:pointer;
+}
+.sidebar{
+  background:#21232e;
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  width:fit-content;
+  padding:0 20px;
+  padding-top:calc(8vh + 20px);
+  display:flex;
+  flex-direction:column;
+  z-index:998;
+}
+@keyframes open{
+  from{
+    width:70px;
+  }
+  to{
+    width:300px;
+  }
+}
+@keyframes close{
+  from{
+    width:300px;
+  }
+  to{
+    width:70px;
+  }
+}
+.sidebar.open{
+  width:300px;
+  animation:open .2s ease-in-out;
+}
+.sidebar.close{
+  width:fit-content;
+  animation:close .2s ease-in-out;
+}
+.hamburger{
+  cursor:pointer;
+  height:fit-content;
+}
+.hamburger .content{
+  height:3px;
+  width:30px;
+  background:#d3d3d3;
+  position:relative;
+  margin:13px 0;
+}
+.hamburger .content::before{
+  content:"";
+  height:3px;
+  width:30px;
+  background:#d3d3d3;
+  position:absolute;
+  top:-10px;
+}
+.hamburger .content::after{
+  content:"";
+  height:3px;
+  width:30px;
+  background:#d3d3d3;
+  position:absolute;
+  top:10px;
+}
+.hamburger .content.cross{
+  transform:rotate(45deg);
+  animation:line-2 .2s ease-in-out;
+}
+.hamburger .content.cross::before{
+  opacity:0;
+  animation:line-1 .2s ease-in-out;
+}
+.hamburger .content.cross::after{
+  top:0;
+  transform:rotate(-90deg);
+  animation:line-3 .2s ease-in-out;
+}
+.hamburger .content.burger{
+  transform:rotate(0);
+  animation:unline-2 .2s ease-in-out;
+}
+.hamburger .content.burger::before{
+  opacity:1;
+  animation:unline-1 .2s ease-in-out;
+}
+.hamburger .content.burger::after{
+  top:10px;
+  transform:rotate(0);
+  animation:unline-3 .2s ease-in-out;
+}
+@keyframes line-1{
+  from{
+    opacity:1;
+  }
+  to{
+    opacity:0;
+  }
+}
+@keyframes line-2{
+  from{
+    transform:rotate(0);
+  }
+  to{
+    transform:rotate(45deg);
+  }
+}
+@keyframes line-3{
+  from{
+    top:10px;
+    transform:rotate(0);
+  }
+  to{
+    top:0;
+    transform:rotate(-90deg);
+  }
+}
+@keyframes unline-1{
+  from{
+    opacity:0;
+  }
+  to{
+    opacity:1;
+  }
+}
+@keyframes unline-2{
+  from{
+    transform:rotate(45deg);
+  }
+  to{
+    transform:rotate(0);
+  }
+}
+@keyframes unline-3{
+  from{
+    top:0;
+    transform:rotate(-90deg);
+  }
+  to{
+    top:10px;
+    transform:rotate(0);
+  }
+}
+.sidebar:not(.open) input, .sidebar:not(.open) .tag, .sidebar:not(.open) .predictions, .sidebar:not(.open) .search-bar{
+  opacity:0;
+  visibility:hidden;
+  position:fixed;
+  margin:3vh 0;
+}
+.sidebar.open input{
+  height:3vh;
+  outline:none;
+  border:none;
+  padding:5px 10px;
+  font-size:16px;
+  background:#0003;
+  border-radius:5px 0 0 5px;
+  width:calc(100% - 20px);
+}
+.sidebar .input .search-bar{
+  display:flex;
+  flex-direction:row;
+  margin:2vh 0;
+}
+.sidebar .input .search{
+  width:5vh;
+  border:none;
+  background:#00000018;
+  border-radius:0 5px 5px 0;
+  color:#fff;
+  transition:.2s ease-in-out;
+  cursor:pointer;
+}
+.sidebar .input .search:hover{
+  background:#fff1;
+}
+.sidebar.open .main-tags .tag{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#0003;
+  border-radius:3px;
+  overflow:hidden;
+  margin:8px 0;
+  cursor:pointer;
+}
+.sidebar.open .main-tags .tag .tag-name{
+  padding:5px 8px;
+}
+.sidebar.open .main-tags .tag .tag-name.user{
+  color:#a01818;
+}
+.sidebar.open .main-tags .tag .tag-name.lyc{
+  color:#a0188e;
+}
+.sidebar.open .main-tags .tag .tag-name.prot{
+  color:#43a018;
+}
+.sidebar.open .main-tags .tag .tag-name.thing{
+  color:#1863a0;
+}
+.sidebar.open .main-tags .tag .tag-name.type{
+  color:#a06518;
+}
+.sidebar.open .main-tags .tag .tag-usage{
+  width:30px;
+  padding:8px 5px;
+  background-color:#fff1;
+  font-size:small;
+  text-align:center;
+}
+.page-icon{
+  height:35px;
+  margin-right:15px;
+}
+.main{
+  position:fixed;
+  top:8vh;
+  left:70px;
+  bottom:0;
+  right:0;
+  display:flex;
+  flex-direction:column;
+  overflow-y:auto;
+}
+.image{
+  max-height:150px;
+  margin:10px;
+  border-radius:5px;
+  cursor:pointer;
+}
+.images{
+  padding:3rem;
+}
+.pages{
+  display:flex;
+  flex-direction:row;
+  justify-content:center;
+}
+.move-buttons{
+  display:flex;
+  flex-direction:row;
+  justify-content:center;
+  width:100%;
+}
+.switch-page{
+  width:40px;
+  height:40px;
+  margin:20px 10px;
+  background:#da5213;
+  border:1px solid #da5213;
+  border-radius:5px;
+  cursor:pointer;
+}
+.page{
+  width:40px;
+  height:40px;
+  margin:20px 10px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border:1px solid #da5213;
+  color:#da5213;
+  border-radius:5px;
+  cursor:pointer;
+}
+.current-page{
+  width:40px;
+  height:40px;
+  margin:20px 10px;
+  background:#da5213;
+  border:1px solid #da5213;
+  border-radius:5px;
+  cursor:pointer;
+  color:#fff;
+}
+.switch-page *{
+  color:#fff;
+}
+.predictions{
+  position:absolute;
+  background:#17181f;
+  width:100%;
+  border-radius:5px;
+}
+.prediction{
+  border-bottom:1px solid #fff1;
+  padding:5px 10px;
+  display:flex;
+  flex-direction:row;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+}
+.prediction:last-child{
+  border-bottom:none;
+}
+.post-count{
+  color:#fffa;
+}
+.tag-name.thing{
+  color:#1863a0;
+}
+.tag-name.user{
+  color:#a01818;
+}
+.tag-name.lyc{
+  color:#a0188e;
+}
+.tag-name.prot{
+  color:#43a018;
+}
+.tag-name.type{
+  color:#a06518;
+}
+.tag-name.collection{
+  color:#18a08e;
+}
+.tag-name.series{
+  color:#e9da0a;
+}
