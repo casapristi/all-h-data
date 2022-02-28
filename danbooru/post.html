@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/post.css">
+    <script src="scripts/post.js"></script>
+    <script src="https://kit.fontawesome.com/f47d1d8c26.js" crossorigin="anonymous"></script>
+    <link rel="icon" href="../public/icon-sq.png">
+    <title>Danbooru</title>
+  </head>
+  <body>
+    <nav class="navbar">
+      <img src="../public/icon.png" alt="icon-danbooru" class="page-icon">
+      <h1 class="website-name" onclick="window.location.href='../danbooru.html'">Danbooru</h1>
+    </nav>
+    <main class="main">
+      <div class="image-and-tags">
+        <div class="tag-container">
+          <div class="input">
+            <input
+              oninput="predict(this)"
+              spellcheck="false"
+              placeholder="Search tags..."
+              id="search-bar"
+            >
+            <div class="predictions" id="predictions"></div>
+          </div>
+          <div class="tags" id="tags">
+            <p class="tag-category-title">Artists</p>
+            <div class="tag-category" id="artists"></div>
+            <p class="tag-category-title">Copyrights</p>
+            <div class="tag-category" id="copyrights"></div>
+            <p class="tag-category-title">Characters</p>
+            <div class="tag-category" id="characters"></div>
+            <p class="tag-category-title">Tags</p>
+            <div class="tag-category" id="global"></div>
+            <p class="tag-category-title">Meta</p>
+            <div class="tag-category" id="meta"></div>
+          </div>
+        </div>
+        <div class="family">
+          <div class="post">
+            <div id="file"></div>
+            <div class="commentary" id="commentary"></div>
+          </div>
+          <div class="comments" id="comments"></div>
+        </div>
+      </div>
+      <div class="right-bar">
+        <div class="more-information">
+          <h2 class="information-title">Information</h2>
+          <p class="information-item">Score: <span id="score"></span></p>
+          <p class="information-item">Rating: <span id="rating"></span></p>
+          <p class="information-item">Uploader: <span id="uploader"></span></p>
+          <p class="information-item">Favorite Count: <span id="fav-count"></span></p>
+          <p class="information-item">Created at: <span id="created-at"></span></p>
+          <p class="information-item">Id: <span id="id"></span></p>
+          <p class="information-item">Size: <span id="size"></span></p>
+        </div>
+        <div class="actions">
+          <button class="big-nav-button" id="download" onclick="downloadImage()"><i class="fa fa-download"></i> Download</button>
+          <button class="big-nav-button" id="random-post" onclick="randomPost()"><i class="fas fa-random"></i> Random</button>
+          <div class="navigation">
+            <button class="nav-button" id="previous-post" onclick="operatePost(-1)"><i class="fas fa-caret-left"></i></button>
+            <button class="nav-button" id="next-post" onclick="operatePost(+1)"><i class="fas fa-caret-right"></i></button>
+          </div>
+        </div>
+        <div class="recommendations" id="recommendations"></div>
+      </div>
+    </main>
+  </body>
+</html>
