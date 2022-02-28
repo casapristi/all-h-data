@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/yandere.css">
+    <script src="scripts/yandere.js"></script>
+    <script src="https://kit.fontawesome.com/f47d1d8c26.js" crossorigin="anonymous"></script>
+    <link rel="icon" href="public/icon-sq.png">
+    <title>Yande.re</title>
+  </head>
+  <body>
+    <nav class="navbar">
+      <img src="public/icon.png" alt="icon-danbooru" class="page-icon">
+      <h1 class="website-name" onclick="window.location.href='yandere.html'">Yande.re</h1>
+    </nav>
+    <div class="sidebar" id="sidebar">
+      <div class="hamburger" onclick="toggleSidebar()">
+        <div class="content" id="hamburger-content"></div>
+      </div>
+      <div class="input">
+        <div class="search-bar">
+          <input
+            oninput="predict(this)"
+            spellcheck="false"
+            placeholder="Search tags..."
+            id="search-bar"
+          >
+          <button class="search" onclick="sendTags(document.getElementById('search-bar'))"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="predictions" id="predictions"></div>
+      </div>
+      <div class="main-tags" id="main-tags"></div>
+    </div>
+    <main class="main">
+      <div class="images" id="images"></div>
+      <div class="move-buttons">
+        <div class="pages" id="pages"></div>
+        <div class="close-movements">
+          <button class="switch-page" id="prev-page" onclick="prevPage()"><i class="fas fa-caret-left"></i></button>
+          <button class="switch-page" id="next-page" onclick="nextPage()"><i class="fas fa-caret-right"></i></button>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
