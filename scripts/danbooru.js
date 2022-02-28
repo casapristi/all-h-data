@@ -68,7 +68,7 @@ window.onload=()=>{
     tagsElem.innerHTML=Object.entries(tags).sort((a,b)=>b[1]-a[1]).slice(0,15).map(e=>`<a class="tag" onclick="setTag('${e[0]}')"><p class="tag-name thing">${e[0]}</p><p class="tag-usage">${e[1]}</p></a>`).join("");
     images.innerHTML=data.map(e=>{
       if(!e?.preview_file_url)return"";
-      return`<img src="${e.preview_file_url}" alt="${e.id}" class="image" onclick="window.location.href='danbooru/post.html?id=${e.id}'">`;
+      return`<img src="${e.preview_file_url}" alt="${e.id}" class="image" onclick="window.location.href='danbooru/post?id=${e.id}'">`;
     }).join("");
   });
 };
