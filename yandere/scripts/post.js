@@ -112,15 +112,9 @@ function predict(input){
   const predictions=document.getElementById("predictions");
   const value=input.value.split(/ +/)[input.value.split(/ +/).length-1];
   if(!input.value.length||!value.length)return predictions.innerHTML="";
-  if(value.startsWith("pool:")){
-    fetch(`https://danbooru.donmai.us/pools.json?search[name_matches]=${encodeURIComponent(value.slice(5))}*&search[order]=count&search[hide_empty]=t`)
-    .then(res=>res.json())
-    .then(displayPredictions);
-  }else{
-    fetch(`https://danbooru.donmai.us/tags.json?search[name_matches]=${encodeURIComponent(value)}*&search[order]=count&search[hide_empty]=t`)
-    .then(res=>res.json())
-    .then(displayPredictions);
-  };
+  fetch(`https://yande.re/tag.json?name=${encodeURIComponent(value)}&order=count`)
+  .then(res=>res.json())
+  .then(displayPredictions);
 };
 function displayPredictions(data){
   predictions.innerHTML=data.slice(0,10).map(t=>{
