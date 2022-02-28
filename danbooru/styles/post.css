@@ -187,16 +187,32 @@ body{
     transform:rotate(0);
   }
 }
-input{
-  margin:3vh 0;
+.search-bar input{
   height:3vh;
   outline:none;
   border:none;
   padding:5px 10px;
   font-size:16px;
   background:#0003;
-  border-radius:5px;
+  border-radius:5px 0 0 5px;
   width:calc(100% - 20px);
+}
+.input .search-bar{
+  display:flex;
+  flex-direction:row;
+  margin:2vh 0;
+}
+.input .search{
+  width:5vh;
+  border:none;
+  background:#00000018;
+  border-radius:0 5px 5px 0;
+  color:#fff;
+  transition:.2s ease-in-out;
+  cursor:pointer;
+}
+.input .search:hover{
+  background:#fff1;
 }
 .main{
   position:fixed;
