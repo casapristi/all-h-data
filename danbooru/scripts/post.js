@@ -29,12 +29,10 @@ function rating(r){
   if(r=="e")return"Explicit";
   return"Unknown";
 };
-var imageId;
 window.onload=()=>{
   fetch(`https://danbooru.donmai.us/posts/${search.id}.json`)
   .then(res=>res.json())
   .then(data=>{
-    imageId=data.id;
     const tags=data.tag_string_general.split(" ");
     const artists=data.tag_string_artist.split(" ");
     const characters=data.tag_string_character.split(" ");
@@ -47,7 +45,7 @@ window.onload=()=>{
     };
     document.getElementById("rating").innerHTML=rating(data.rating);
     document.getElementById("size").innerHTML=`${data.image_width} x ${data.image_height}`;
-    document.getElementById("id").innerHTML=data.id;
+    document.getElementById("id").innerHTML=search.id;
     document.getElementById("created-at").innerHTML=new Date(data.created_at).toDateString();
     document.getElementById("fav-count").innerHTML=data.fav_count.toLocaleString();
     document.getElementById("score").innerHTML=`${data.score.toLocaleString()} (<i class="fas fa-caret-up"></i> ${data.up_score.toLocaleString()} / <i class="fas fa-caret-down"></i> ${(Math.abs(data.down_score)).toLocaleString()})`;
@@ -71,33 +69,34 @@ window.onload=()=>{
     document.getElementById("meta").innerHTML=meta.map(tag=>{
       return`<a class="tag-obj" onclick="setTag('${tag}')"><p class="tag-name type">${tag}</p></a>`
     }).join("");
-    fetch(`https://danbooru.donmai.us/recommended_posts.json?search[post_id]=${data.id}&limit=20`)
-    .then(res=>res.json())
-    .then(posts=>{
-      if(!posts.length){
-        document.getElementById("recommendations").innerHTML="No posts found...";
-      }else{
-        document.getElementById("recommendations").innerHTML=posts.map(({post})=>`<img src="${post.preview_file_url}" alt="${post.id}" onclick="setImage(${post.id})">`).join("");
-      };
-    });
-    fetch(`https://danbooru.donmai.us/artist_commentary_versions.json?search[post_id]=${data.id}`)
-    .then(res=>res.json())
-    .then(commentary=>{
-      if(commentary.length){
-        var content=commentary[0].original_description.replace(/(\[\/?t(r|d|h|able|body)\])\n/g,(_,b)=>b).replace(/"(.*?[^""])":\[(.*?[^\[\]])\]/g,(_,label,link)=>{
-          if(link.startsWith("/"))return`<b>${label}</b>`;
-          return`<a href="${link}">${label}</a>`;
-        });
-        content=content.replace(/\r/g,"").replace(/\n/g,"<br>").replace(/\[/g,"<").replace(/\]/g,">");
-        document.getElementById("commentary").innerHTML=content;
-      }else{
-        document.getElementById("commentary").innerHTML="No commentary...";
-      };
-    });
+  });
+  fetch(`https://danbooru.donmai.us/recommended_posts.json?search[post_id]=${search.id}&limit=20`)
+  .then(res=>res.json())
+  .then(posts=>{
+    if(!posts.length){
+      document.getElementById("recommendations").innerHTML="No posts found...";
+    }else{
+      document.getElementById("recommendations").innerHTML=posts.map(({post})=>`<img src="${post.preview_file_url}" alt="${post.id}" onclick="setImage(${post.id})">`).join("");
+    };
+  });
+  fetch(`https://danbooru.donmai.us/artist_commentary_versions.json?search[post_id]=${search.id}`)
+  .then(res=>res.json())
+  .then(commentary=>{
+    if(commentary.length){
+      var content=commentary[0].original_description.replace(/(\[\/?t(r|d|h|able|body)\])\n/g,(_,b)=>b).replace(/"(.*?[^""])":\[(.*?[^\[\]])\]/g,(_,label,link)=>{
+        if(link.startsWith("/"))return`<b>${label}</b>`;
+        return`<a href="${link}">${label}</a>`;
+      });
+      content=content.replace(/\r/g,"").replace(/\n/g,"<br>").replace(/\[/g,"<").replace(/\]/g,">");
+      document.getElementById("commentary").innerHTML=content;
+    }else{
+      document.getElementById("commentary").innerHTML="No commentary...";
+    };
   });
   fetch(`https://danbooru.donmai.us/comments.json?search[post_id]=${search.id}&search[order]=score`)
   .then(res=>res.json())
   .then(data=>{
+    data=data.filter(c=>!c.is_deleted);
     document.getElementById("comments").innerHTML=data.map(comment=>{
       fetch(`https://danbooru.donmai.us/users/${comment.updater_id}.json`)
       .then(res=>res.json())
@@ -139,7 +138,7 @@ async function downloadImage(){
   const imageURL=URL.createObjectURL(imageBlog);
   const link=document.createElement("a");
   link.href=imageURL;
-  link.download=imageId+"-"+fileName;
+  link.download=search.id+"-"+fileName;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
