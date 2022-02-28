@@ -203,5 +203,5 @@ function sendTags(input){
   search.tags=tags;
   delete search[""];
   delete search.id;
-  window.location.href="../danbooru.html?"+Object.entries(search).map(e=>`${e[0]}=${e[1]}`).join("&");
+  window.location.href="../danbooru?"+Object.entries(search).map(e=>`${e[0]}=${e[1]}`).join("&");
 };
