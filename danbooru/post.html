@@ -19,12 +19,15 @@
       <div class="image-and-tags">
         <div class="tag-container">
           <div class="input">
-            <input
-              oninput="predict(this)"
-              spellcheck="false"
-              placeholder="Search tags..."
-              id="search-bar"
-            >
+            <div class="search-bar">
+              <input
+                oninput="predict(this)"
+                spellcheck="false"
+                placeholder="Search tags..."
+                id="search-bar"
+              >
+              <button class="search" onclick="sendTags(document.getElementById('search-bar'))"><i class="fas fa-search"></i></button>
+            </div>
             <div class="predictions" id="predictions"></div>
           </div>
           <div class="tags" id="tags">
