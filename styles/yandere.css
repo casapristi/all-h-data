@@ -31,7 +31,20 @@ body{
   display:flex;
   flex-direction:row;
   align-items:center;
-  padding:0 50px;
+  padding:0 20px;
+  justify-content:space-between;
+  border-bottom:1px solid #121318;
+}
+.web-name{
+  display:flex;
+  align-items:center;
+}
+.links{
+  display:flex;
+}
+.link{
+  margin:0 20px;
+  text-decoration:none;
 }
 .website-name{
   color:#fff;
@@ -51,6 +64,7 @@ body{
   display:flex;
   flex-direction:column;
   z-index:998;
+  border-right:1px solid #121318;
 }
 @keyframes open{
   from{
@@ -188,7 +202,7 @@ body{
   margin:3vh 0;
 }
 .sidebar.open input{
-  height:3vh;
+  height:4vh;
   outline:none;
   border:none;
   padding:5px 10px;
@@ -203,7 +217,7 @@ body{
   margin:2vh 0;
 }
 .sidebar .input .search{
-  width:5vh;
+  width:6vh;
   border:none;
   background:#00000018;
   border-radius:0 5px 5px 0;
@@ -259,11 +273,23 @@ body{
   flex-direction:column;
   overflow-y:auto;
 }
+@keyframes unfold{
+  0%{
+    position:absolute;
+  }
+  100%{
+    position:initial;
+  }
+}
 .move-buttons{
   display:flex;
   flex-direction:row;
   justify-content:center;
   width:100%;
+  background:#181920;
+  height:100%;
+  padding:10px 0;
+  animation:unfold .2s ease-in-out;
 }
 .pages{
   display:flex;
@@ -304,12 +330,28 @@ body{
 .switch-page *{
   color:#fff;
 }
+@keyframes pop{
+  0%{
+    transform:scale(0);
+    opacity:0;
+  }
+  80%{
+    transform:scale(1.1);
+    opacity:1;
+  }
+  100%{
+    transform:scale(1);
+    opacity:1;
+  }
+}
 .image{
-  max-height:400px;
   max-width:150px;
+  max-height:400px;
   margin:10px;
   border-radius:5px;
   cursor:pointer;
+  border:1px solid #121318;
+  animation:pop .2s ease-in-out;
 }
 .input{
   position:relative;
@@ -372,8 +414,13 @@ body{
     flex-direction:column;
     align-items:center;
   }
+  .close-movements{
+    width:calc(100% - 10px * 2);
+    margin:0 10px;
+  }
   .switch-page{
-    margin:5px 10px;
+    margin:5px;
+    width:100%;
   }
   .page{
     margin:5px 10px;
@@ -393,5 +440,8 @@ body{
   }
   .images img{
     max-width:85px;
+  }
+  .link{
+    margin:0 8px;
   }
 }
