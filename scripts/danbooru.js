@@ -37,7 +37,7 @@ window.onload=()=>{
   for(let i=min;i<max;i++){
     if(i>1e3||i<1)continue;
     count++;
-    fetch(`https://danbooru.donmai.us/posts.json?page=${i}&limit=75${tags}`)
+    fetch(`https://danbooru.donmai.us/posts.json?page=${i}&limit=50${tags}`)
     .then(res=>res.json())
     .then(data=>{
       if(data.length)pages.push(i);
